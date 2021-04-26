@@ -1884,47 +1884,52 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'App',
   data: function data() {
     return {
       newlistname: "",
-      items: [],
       lists: []
     };
   },
   methods: {
-    filterItems: function filterItems(listid) {
-      return this.items.filter(function (item) {
-        return item.listid === listid;
-      });
-    },
-    getItems: function getItems() {
+    getLists: function getLists() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var _yield$window$axios$g, data;
-
+        var listresponse, returnedLists, itemsresponse, returnedItems;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return window.axios.get("/api/items");
+                return window.axios.get("/api/lists");
 
               case 2:
-                _yield$window$axios$g = _context.sent;
-                data = _yield$window$axios$g.data;
-                data.forEach(function (item) {
-                  return _this.items.push({
-                    content: item.content,
-                    id: item.id,
-                    listid: item.todolist_id
-                  });
+                listresponse = _context.sent;
+                returnedLists = listresponse.data;
+                _context.next = 6;
+                return window.axios.get("/api/items");
+
+              case 6:
+                itemsresponse = _context.sent;
+                returnedItems = itemsresponse.data;
+                returnedLists.forEach(function (list) {
+                  var newList = {
+                    id: list.id,
+                    name: list.name,
+                    items: returnedItems.filter(function (item) {
+                      return item.todolist_id == list.id;
+                    })
+                  };
+
+                  _this.lists.push(newList);
                 });
 
-              case 5:
+              case 9:
               case "end":
                 return _context.stop();
             }
@@ -1932,49 +1937,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
-    getLists: function getLists() {
+    //Get changed list out of lists, items.push(). list param is list id
+    newItem: function newItem(list, content) {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
-        var _yield$window$axios$g2, data;
+        var user, _yield$window$axios$p, data, updatedlist;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
-                return window.axios.get("/api/lists");
-
-              case 2:
-                _yield$window$axios$g2 = _context2.sent;
-                data = _yield$window$axios$g2.data;
-                data.forEach(function (list) {
-                  return _this2.lists.push({
-                    id: list.id,
-                    name: list.name
-                  });
-                });
-
-              case 5:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2);
-      }))();
-    },
-    newItem: function newItem(list, content) {
-      var _this3 = this;
-
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
-        var user, _yield$window$axios$p, data;
-
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
                 user = 1;
-                _context3.next = 3;
+                _context2.next = 3;
                 return window.axios.post('/api/items', {
                   user: user,
                   list: list,
@@ -1982,14 +1957,52 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
 
               case 3:
-                _yield$window$axios$p = _context3.sent;
+                _yield$window$axios$p = _context2.sent;
                 data = _yield$window$axios$p.data;
-                console.log(data);
-
-                _this3.items.push({
+                updatedlist = _this2.lists.find(function (oldlist) {
+                  return oldlist.id === list;
+                });
+                updatedlist.items.push({
                   content: data.content,
                   id: data.id,
                   list: data.todolist_id
+                });
+                _this2.newlistname = "";
+
+              case 8:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    newList: function newList() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+        var user, name, _yield$window$axios$p2, data;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                user = 1;
+                name = _this3.newlistname;
+                _context3.next = 4;
+                return window.axios.post('/api/lists', {
+                  user: user,
+                  name: name
+                });
+
+              case 4:
+                _yield$window$axios$p2 = _context3.sent;
+                data = _yield$window$axios$p2.data;
+
+                _this3.lists.push({
+                  id: data.id,
+                  name: data.name,
+                  items: []
                 });
 
                 _this3.newlistname = "";
@@ -2002,36 +2015,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee3);
       }))();
     },
-    newList: function newList() {
-      var _this4 = this;
+    editItem: function editItem() {// To do
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
-        var user, name, _yield$window$axios$p2, data;
-
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                user = 1;
-                name = _this4.newlistname;
-                _context4.next = 4;
-                return window.axios.post('/api/lists', {
-                  user: user,
-                  name: name
-                });
-
-              case 4:
-                _yield$window$axios$p2 = _context4.sent;
-                data = _yield$window$axios$p2.data;
-
-                _this4.lists.push({
-                  id: data.id,
-                  name: data.name
-                });
-
-                _this4.newlistname = "";
-
-              case 8:
               case "end":
                 return _context4.stop();
             }
@@ -2039,7 +2029,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee4);
       }))();
     },
-    editItem: function editItem() {// To do
+    editList: function editList() {// To do
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
@@ -2053,23 +2043,71 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee5);
       }))();
     },
-    editList: function editList() {// To do
+    deleteItem: function deleteItem(id) {
+      var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
+        var response, updatedlist;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
+                _context6.next = 2;
+                return window.axios["delete"]("/api/items/".concat(id));
+
+              case 2:
+                response = _context6.sent;
+
+                if (response.status == 200) {
+                  updatedlist = _this4.lists.find(function (oldlist) {
+                    return oldlist.items.some(function (item) {
+                      return item.id === id;
+                    });
+                  });
+                  updatedlist.items = updatedlist.items.filter(function (item) {
+                    return item.id !== id;
+                  });
+                }
+
+              case 4:
               case "end":
                 return _context6.stop();
             }
           }
         }, _callee6);
       }))();
+    },
+    deleteList: function deleteList(id) {
+      var _this5 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                _context7.next = 2;
+                return window.axios["delete"]("/api/lists/".concat(id));
+
+              case 2:
+                response = _context7.sent;
+
+                if (response.status == 200) {
+                  _this5.lists = _this5.lists.filter(function (oldlist) {
+                    return oldlist.id !== id;
+                  });
+                }
+
+              case 4:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7);
+      }))();
     }
   },
   created: function created() {
-    this.getItems();
     this.getLists();
   },
   components: {
@@ -2098,7 +2136,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'Item',
-  props: ["content", "id", "listid"]
+  props: ["content", "id", "todolist_id"],
+  methods: {
+    deleteItem: function deleteItem() {
+      this.$emit("deleteItem", this.id);
+    }
+  }
 });
 
 /***/ }),
@@ -2130,26 +2173,42 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'List',
   data: function data() {
     return {
-      newitemcontent: ""
+      newitemcontent: "",
+      editingList: false,
+      templistValue: null
     };
   },
   methods: {
+    enableEditingList: function enableEditingList() {
+      this.templistValue = this.value;
+      this.editingList = true;
+    },
+    disableEditingList: function disableEditingList() {
+      this.templistValue = null;
+      this.editingList = false;
+    },
     newItem: function newItem() {
       this.$emit("newItem", this.id, this.newitemcontent);
-    }
-  },
-  computed: {
-    filteredItems: function filteredItems() {
-      var _this = this;
-
-      return this.items.filter(function (item) {
-        return item.listid === _this.id;
-      });
+      this.newitemcontent = "";
+    },
+    deleteItem: function deleteItem(id) {
+      this.$emit("deleteItem", id);
+    },
+    deleteList: function deleteList() {
+      this.$emit("deleteList", this.id);
     }
   },
   props: ["name", "id", "items"],
@@ -20630,8 +20689,12 @@ var render = function() {
       _vm._l(_vm.lists, function(list) {
         return _c("List", {
           key: list.id,
-          attrs: { name: list.name, id: list.id, items: _vm.items },
-          on: { newItem: _vm.newItem }
+          attrs: { name: list.name, id: list.id, items: list.items },
+          on: {
+            newItem: _vm.newItem,
+            deleteItem: _vm.deleteItem,
+            deleteList: _vm.deleteList
+          }
         })
       }),
       _vm._v(" "),
@@ -20708,7 +20771,17 @@ var render = function() {
     _c("div", [
       _vm._v(_vm._s(this.content) + " "),
       _c("button", [_vm._v("Edit")]),
-      _c("button", [_vm._v("Delete")])
+      _c(
+        "button",
+        {
+          on: {
+            click: function($event) {
+              return _vm.deleteItem()
+            }
+          }
+        },
+        [_vm._v("Delete")]
+      )
     ])
   ])
 }
@@ -20739,13 +20812,61 @@ var render = function() {
     "div",
     { staticClass: "list" },
     [
-      _c("h2", [
-        _vm._v(_vm._s(this.name) + " "),
-        _c("button", [_vm._v("delete list")])
-      ]),
+      !_vm.editingList
+        ? _c("div", [
+            _c("h2", [
+              _vm._v(_vm._s(this.name) + " "),
+              _c("button", { on: { click: _vm.deleteList } }, [
+                _vm._v("delete list")
+              ]),
+              _c("button", { on: { click: _vm.enableEditingList } }, [
+                _vm._v("edit list")
+              ])
+            ])
+          ])
+        : _vm._e(),
       _vm._v(" "),
-      _vm._l(_vm.filteredItems, function(item) {
-        return _c("item", _vm._b({ key: item.id }, "item", item, false))
+      _vm.editingList
+        ? _c("div", [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.templistValue,
+                  expression: "templistValue"
+                }
+              ],
+              staticClass: "input",
+              domProps: { value: _vm.templistValue },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.templistValue = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("button", { on: { click: _vm.disableEditingList } }, [
+              _vm._v(" Cancel ")
+            ]),
+            _vm._v(" "),
+            _c("button", { on: { click: _vm.saveEdit } }, [_vm._v(" Save ")])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm._l(_vm.items, function(item) {
+        return _c(
+          "item",
+          _vm._b(
+            { key: item.id, on: { deleteItem: _vm.deleteItem } },
+            "item",
+            item,
+            false
+          )
+        )
       }),
       _vm._v(" "),
       _c(

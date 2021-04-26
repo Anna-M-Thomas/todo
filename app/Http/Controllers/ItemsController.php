@@ -51,7 +51,8 @@ class ItemsController extends Controller
 
 //DELETE to /api/items/id, in url id, in request old list, new list, content
   public function destroy($id){
-      Todolist::destroy($id);
+      $deletedid = $id;
+      Todoitem::destroy($id);
       return response(null, Response::HTTP_OK);
 }
 
