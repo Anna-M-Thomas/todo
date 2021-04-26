@@ -1,0 +1,45 @@
+# //Lists get...back for now
+ GET http://127.0.0.1:8000/api/lists
+
+###//Items get OK
+GET http://127.0.0.1:8000/api/items
+
+###//Lists post OK
+POST http://127.0.0.1:8000/api/lists/
+Content-Type: application/x-www-form-urlencoded
+
+name=cat
+&user=1
+
+### //Items post OK
+POST http://127.0.0.1:8000/api/items
+Content-Type: application/x-www-form-urlencoded
+
+user=1
+&list=1
+&content=cat
+
+### //List edit OK
+PUT  http://127.0.0.1:8000/api/lists/1
+Content-Type: application/x-www-form-urlencoded
+
+name=belinda or something
+
+### //item edit no list change
+PUT  http://127.0.0.1:8000/api/items/1
+Content-Type: application/x-www-form-urlencoded
+
+oldlist=1&newlist=1&content=new content
+
+### //item edit yes list change OK!
+PUT  http://127.0.0.1:8000/api/items/1
+Content-Type: application/x-www-form-urlencoded
+
+oldlist=1&newlist=2&content=new content
+
+### Delete list OK
+DELETE http://127.0.0.1:8000/api/lists/2
+
+### Delete item OK!
+
+DELETE http://127.0.0.1:8000/api/items/1
