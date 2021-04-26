@@ -1875,16 +1875,37 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'App',
   data: function data() {
     return {
       items: [],
-      lists: []
+      lists: [],
+      newlistname: ""
     };
   },
   methods: {
+    filterItems: function filterItems(listid) {
+      return this.items.filter(function (item) {
+        return item.listid === listid;
+      });
+    },
     getItems: function getItems() {
       var _this = this;
 
@@ -1904,7 +1925,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 data.forEach(function (item) {
                   return _this.items.push({
                     content: item.content,
-                    id: item.todolist_id
+                    id: item.id,
+                    listid: item.todolist_id
                   });
                 });
 
@@ -1947,13 +1969,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2);
       }))();
     },
-    newList: function newList() {// To do
-
+    newItem: function newItem() {
+      var _arguments = arguments;
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+        var user, list, content, _window$axios$post, data;
+
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                user = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : 1;
+                list = _arguments.length > 1 ? _arguments[1] : undefined;
+                content = _arguments.length > 2 ? _arguments[2] : undefined;
+                _window$axios$post = window.axios.post('/api/items', {
+                  user: user,
+                  list: list,
+                  content: content
+                }), data = _window$axios$post.data; //consolelog before figure out how to push
+
+                console.log(data);
+
+              case 5:
               case "end":
                 return _context3.stop();
             }
@@ -1961,13 +1997,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee3);
       }))();
     },
-    newItem: function newItem() {// To do
+    newList: function newList() {
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+        var user, name, _yield$window$axios$p, data;
+
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
+                user = 1;
+                name = _this3.newlistname;
+                _context4.next = 4;
+                return window.axios.post('/api/lists', {
+                  user: user,
+                  name: name
+                });
+
+              case 4:
+                _yield$window$axios$p = _context4.sent;
+                data = _yield$window$axios$p.data;
+
+                _this3.lists.push({
+                  id: data.id,
+                  name: data.name
+                });
+
+                _this3.newlistname = "";
+
+              case 8:
               case "end":
                 return _context4.stop();
             }
@@ -1975,7 +2034,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee4);
       }))();
     },
-    editList: function editList() {// To do
+    editItem: function editItem() {// To do
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
@@ -1989,7 +2048,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee5);
       }))();
     },
-    editItem: function editItem() {// To do
+    editList: function editList() {// To do
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
@@ -2032,11 +2091,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'Item'
+  name: 'Item',
+  props: ["content", "id", "listid"]
 });
 
 /***/ }),
@@ -20435,12 +20492,118 @@ var render = function() {
   return _c(
     "div",
     { attrs: { id: "app" } },
-    _vm._l(_vm.lists, function(list) {
-      return _c("div", { key: list.id }, [
-        _c("h2", [_vm._v("Here is the name of the list: " + _vm._s(list.name))])
+    [
+      _vm._l(_vm.lists, function(list) {
+        return _c(
+          "div",
+          { key: list.id },
+          [
+            _c("h2", [
+              _vm._v(_vm._s(list.name) + " "),
+              _c("button", [_vm._v("delete list")])
+            ]),
+            _vm._v(" "),
+            _vm._l(_vm.filterItems(list.id), function(item) {
+              return _c(
+                "item",
+                _vm._b(
+                  { key: item.id, on: { newItem: _vm.newItem } },
+                  "item",
+                  item,
+                  false
+                )
+              )
+            }),
+            _vm._v(" "),
+            _c(
+              "form",
+              {
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    return _vm.newItem($event)
+                  }
+                }
+              },
+              [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.newitemname,
+                      expression: "newitemname"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: {
+                    type: "text",
+                    name: "itemname",
+                    placeholder: "Add new item"
+                  },
+                  domProps: { value: _vm.newitemname },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.newitemname = $event.target.value
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("button", { attrs: { type: "submit" } }, [_vm._v("submit")])
+              ]
+            )
+          ],
+          2
+        )
+      }),
+      _vm._v(" "),
+      _c("div", [
+        _c(
+          "form",
+          {
+            on: {
+              submit: function($event) {
+                $event.preventDefault()
+                return _vm.newList($event)
+              }
+            }
+          },
+          [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.newlistname,
+                  expression: "newlistname"
+                }
+              ],
+              staticClass: "input",
+              attrs: {
+                type: "text",
+                name: "listname",
+                placeholder: "Add new list"
+              },
+              domProps: { value: _vm.newlistname },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.newlistname = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("button", { attrs: { type: "submit" } }, [_vm._v("submit")])
+          ]
+        )
       ])
-    }),
-    0
+    ],
+    2
   )
 }
 var staticRenderFns = []
@@ -20466,22 +20629,15 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "item" }, [
-      _c("h3", [_vm._v("Title")]),
-      _vm._v(" "),
+  return _c("div", { staticClass: "item" }, [
+    _c("div", [
+      _vm._v(_vm._s(this.content) + " "),
       _c("button", [_vm._v("Edit")]),
-      _vm._v(" "),
       _c("button", [_vm._v("Delete")])
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 

@@ -30,9 +30,9 @@ class ItemsController extends Controller
       $item->content = $request->content;
       $item->todolist_id = $request->list;
       $user->items()->save($item);
-     $list->items()->save($item);
+      $list->items()->save($item);
       $item->save();
-      return response(null, Response::HTTP_OK);
+      return response($item->jsonSerialize(), Response::HTTP_OK);
   }
 
   //PUT to /api/items/id, in url id, in request old list, new list, content
@@ -46,7 +46,7 @@ class ItemsController extends Controller
       }
       $item->content = $request->content;
       $item->save();
-      return response(null, Response::HTTP_OK);
+      return response($item->jsonSerialize(), Response::HTTP_OK);
   }
 
 //DELETE to /api/items/id, in url id, in request old list, new list, content

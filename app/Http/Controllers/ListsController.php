@@ -28,7 +28,7 @@ class ListsController extends Controller
       $list->name = $request->name;
       $user->todolists()->save($list);
       $list->save();
-      return response(null, Response::HTTP_OK);
+      return response($list->jsonSerialize(), Response::HTTP_OK);
   }
 
   //id in url, name in body
@@ -36,7 +36,7 @@ class ListsController extends Controller
       $list = Todolist::find($id);
         $list->name = $request->name;
         $list->save();
-      return response(null, Response::HTTP_OK);
+      return response($list->jsonSerialize(), Response::HTTP_OK);
   }
 
   public function destroy($id){

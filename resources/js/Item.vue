@@ -1,14 +1,12 @@
 <template>
     <div class="item">
-            <h3>Title</h3>
-            <button>Edit</button>
-            <button>Delete</button>
-
+            <div>{{this.content}} <button>Edit</button><button>Delete</button></div>
     </div>
 </template>
 
 <script>
 export default {
-     name: 'Item',
+    name: 'Item',
+    props: ["content", "id", "listid"]
 };
 </script>
