@@ -1,38 +1,32 @@
 
 <template>
   <div id="app">
-    <div v-for="list in lists" :key="list.id">
-        <h2>{{list.name}} <button>delete list</button></h2>
-        <item 
-            v-for="item in filterItems(list.id)" 
-            v-bind="item"
-            :key="item.id"
-            @newItem="newItem"
-        ></item>
-        <form @submit.prevent="newItem">
-            <input type="text" class="input" name="itemname" v-model="newitemname" placeholder="Add new item" />
+    <List 
+        v-for="list in lists" 
+        :key="list.id" 
+        v-bind:name="list.name"
+        v-bind:id="list.id"
+        v-bind:items="items"
+        @newItem="newItem"
+    ></List>  
+    <br />
+     <form @submit.prevent="newList">
+            <input type="text" class="input" name="listname" v-model="newlistname" placeholder="MAKE NEW LIST" />
             <button type="submit" >submit</button>
         </form>
-    </div>
-    <div> 
-        <form @submit.prevent="newList">
-            <input type="text" class="input" name="listname" v-model="newlistname" placeholder="Add new list" />
-            <button type="submit" >submit</button>
-        </form>
-    </div>
   </div>
 </template>
 
 <script>
-import Item from "./Item.vue";
+import List from "./List.vue";
 
 export default {
   name: 'App',
   data() {
         return {
+            newlistname: "",
             items: [],
             lists: [],
-            newlistname: "",
         };
     },
     methods: {
@@ -47,10 +41,12 @@ export default {
             const { data } = await window.axios.get("/api/lists");
             data.forEach(list=>this.lists.push({id: list.id, name: list.name }));
         },
-        async newItem(user=1, list, content) {
-           const { data } = window.axios.post('/api/items', {user, list, content});
-           //consolelog before figure out how to push
+        async newItem(list, content) {
+           let user=1;
+           const { data } = await window.axios.post('/api/items', {user, list, content});
            console.log(data);
+           this.items.push({content: data.content, id: data.id, list: data.todolist_id})
+           this.newlistname = "";
         },
         async newList() {
             let user=1; 
@@ -71,7 +67,7 @@ export default {
         this.getLists();
     },
   components: {
-      Item
+      List
   }
 }
 </script>
