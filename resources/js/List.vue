@@ -1,17 +1,18 @@
 <template>
     <div class="list">
-        <div v-if="!editingList">
-            <h2>{{this.name}} <button v-on:click="deleteList">delete list</button><button v-on:click="enableEditingList">edit list</button></h2>
+        <div v-if="!editing">
+            <h2>{{this.name}} <button v-on:click="deleteList">delete list</button><button v-on:click="enableEditing">edit list</button></h2>
         </div>
-        <div v-if="editingList">
-            <input v-model="templistValue" class="input"/>
-            <button @click="disableEditingList"> Cancel </button>
-            <button @click="saveEdit"> Save </button>
+        <div v-if="editing">
+            <input v-model="tempValue" class="input"/>
+            <button @click="disableEditing"> Cancel </button>
+            <button @click="editList"> Save </button>
         </div>
         <item 
             v-for="item in items" 
             v-bind="item"
             @deleteItem="deleteItem"
+            @editItem="editItem"
             :key="item.id"
         ></item>
         <form @submit.prevent="newItem">
@@ -29,28 +30,35 @@ export default {
   data() {
         return {
             newitemcontent: "",
-            editingList: false,
-            templistValue: null
+            editing: false,
+            tempValue: null
         };
     },
     methods: {
-        enableEditingList: function(){
-        this.templistValue = this.value;
-        this.editingList = true;
+        enableEditing: function(){
+        this.tempValue = this.value;
+        this.editing = true;
         },
-        disableEditingList: function(){
-        this.templistValue = null;
-        this.editingList = false;
+        disableEditing: function(){
+        this.tempValue = null;
+        this.editing= false;
+        },
+        editList(){
+           this.$emit("editList", this.tempValue, this.id);
+           this.disableEditing();
         },
         newItem(){
-            this.$emit("newItem", this.id, this.newitemcontent)
+            this.$emit("newItem", this.id, this.newitemcontent);
             this.newitemcontent="";
         },
         deleteItem(id){
-            this.$emit("deleteItem", id)
+            this.$emit("deleteItem", id);
+        },
+        editItem(id, newlist, oldlist, content){
+            this.$emit("editItem", id, newlist, oldlist, content);
         },
         deleteList(){
-            this.$emit("deleteList", this.id)
+            this.$emit("deleteList", this.id);
         },
     },
  props: ["name", "id", "items"],

@@ -1886,6 +1886,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'App',
@@ -2015,13 +2017,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee3);
       }))();
     },
-    editItem: function editItem() {// To do
+    editItem: function editItem(id, newlist, oldlist, content) {
+      var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+        var _yield$window$axios$p3, data, updatedlist;
+
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
+                _context4.next = 2;
+                return window.axios.put("api/items/".concat(id), {
+                  newlist: newlist,
+                  oldlist: oldlist,
+                  content: content
+                });
+
+              case 2:
+                _yield$window$axios$p3 = _context4.sent;
+                data = _yield$window$axios$p3.data;
+
+                if (newlist !== oldlist) {//do something to change lists
+                } else {
+                  updatedlist = _this4.lists.find(function (oldlist) {
+                    return oldlist.items.some(function (item) {
+                      return item.id === id;
+                    });
+                  });
+                  updatedlist.items = updatedlist.items.map(function (item) {
+                    return item.id === id ? data : item;
+                  });
+                }
+
+              case 5:
               case "end":
                 return _context4.stop();
             }
@@ -2029,13 +2058,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee4);
       }))();
     },
-    editList: function editList() {// To do
+    editList: function editList(newname, listid) {
+      var _this5 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
+        var _yield$window$axios$p4, data, updatedlist;
+
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
+                _context5.next = 2;
+                return window.axios.put("api/lists/".concat(listid), {
+                  name: newname
+                });
+
+              case 2:
+                _yield$window$axios$p4 = _context5.sent;
+                data = _yield$window$axios$p4.data;
+                updatedlist = _this5.lists.find(function (oldlist) {
+                  return oldlist.id === listid;
+                });
+                updatedlist.name = data.name;
+
+              case 6:
               case "end":
                 return _context5.stop();
             }
@@ -2044,7 +2090,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     deleteItem: function deleteItem(id) {
-      var _this4 = this;
+      var _this6 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
         var response, updatedlist;
@@ -2059,7 +2105,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context6.sent;
 
                 if (response.status == 200) {
-                  updatedlist = _this4.lists.find(function (oldlist) {
+                  updatedlist = _this6.lists.find(function (oldlist) {
                     return oldlist.items.some(function (item) {
                       return item.id === id;
                     });
@@ -2078,7 +2124,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     deleteList: function deleteList(id) {
-      var _this5 = this;
+      var _this7 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7() {
         var response;
@@ -2093,7 +2139,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context7.sent;
 
                 if (response.status == 200) {
-                  _this5.lists = _this5.lists.filter(function (oldlist) {
+                  _this7.lists = _this7.lists.filter(function (oldlist) {
                     return oldlist.id !== id;
                   });
                 }
@@ -2134,12 +2180,47 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'Item',
+  data: function data() {
+    return {
+      editing: false,
+      tempValue: null,
+      changelist: null
+    };
+  },
   props: ["content", "id", "todolist_id"],
   methods: {
     deleteItem: function deleteItem() {
       this.$emit("deleteItem", this.id);
+    },
+    enableEditing: function enableEditing() {
+      this.tempValue = this.value;
+      this.editing = true;
+    },
+    disableEditing: function disableEditing() {
+      this.tempValue = null;
+      this.editing = false;
+    },
+    editItem: function editItem() {
+      //newlist, oldlist, content
+      var newlist;
+
+      if (this.changelist) {
+        newlist = this.changelist;
+      } else newlist = this.todolist_id;
+
+      console.log("id inside item", this.id);
+      this.$emit("editItem", this.id, newlist, this.todolist_id, this.tempValue);
+      this.disableEditing();
     }
   }
 });
@@ -2181,24 +2262,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'List',
   data: function data() {
     return {
       newitemcontent: "",
-      editingList: false,
-      templistValue: null
+      editing: false,
+      tempValue: null
     };
   },
   methods: {
-    enableEditingList: function enableEditingList() {
-      this.templistValue = this.value;
-      this.editingList = true;
+    enableEditing: function enableEditing() {
+      this.tempValue = this.value;
+      this.editing = true;
     },
-    disableEditingList: function disableEditingList() {
-      this.templistValue = null;
-      this.editingList = false;
+    disableEditing: function disableEditing() {
+      this.tempValue = null;
+      this.editing = false;
+    },
+    editList: function editList() {
+      this.$emit("editList", this.tempValue, this.id);
+      this.disableEditing();
     },
     newItem: function newItem() {
       this.$emit("newItem", this.id, this.newitemcontent);
@@ -2206,6 +2292,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     deleteItem: function deleteItem(id) {
       this.$emit("deleteItem", id);
+    },
+    editItem: function editItem(id, newlist, oldlist, content) {
+      this.$emit("editItem", id, newlist, oldlist, content);
     },
     deleteList: function deleteList() {
       this.$emit("deleteList", this.id);
@@ -20692,8 +20781,10 @@ var render = function() {
           attrs: { name: list.name, id: list.id, items: list.items },
           on: {
             newItem: _vm.newItem,
+            editItem: _vm.editItem,
             deleteItem: _vm.deleteItem,
-            deleteList: _vm.deleteList
+            deleteList: _vm.deleteList,
+            editList: _vm.editList
           }
         })
       }),
@@ -20768,21 +20859,55 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "item" }, [
-    _c("div", [
-      _vm._v(_vm._s(this.content) + " "),
-      _c("button", [_vm._v("Edit")]),
-      _c(
-        "button",
-        {
-          on: {
-            click: function($event) {
-              return _vm.deleteItem()
+    !_vm.editing
+      ? _c("div", [
+          _vm._v(_vm._s(this.content) + "\n            "),
+          _c(
+            "button",
+            {
+              on: {
+                click: function($event) {
+                  return _vm.deleteItem()
+                }
+              }
+            },
+            [_vm._v("Delete")]
+          ),
+          _vm._v(" "),
+          _c("button", { on: { click: _vm.enableEditing } }, [_vm._v("Edit")])
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.editing
+      ? _c("div", [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.tempValue,
+                expression: "tempValue"
+              }
+            ],
+            staticClass: "input",
+            domProps: { value: _vm.tempValue },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.tempValue = $event.target.value
+              }
             }
-          }
-        },
-        [_vm._v("Delete")]
-      )
-    ])
+          }),
+          _vm._v(" "),
+          _c("button", { on: { click: _vm.disableEditing } }, [
+            _vm._v(" Cancel ")
+          ]),
+          _vm._v(" "),
+          _c("button", { on: { click: _vm.editItem } }, [_vm._v(" Save ")])
+        ])
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
@@ -20812,48 +20937,48 @@ var render = function() {
     "div",
     { staticClass: "list" },
     [
-      !_vm.editingList
+      !_vm.editing
         ? _c("div", [
             _c("h2", [
               _vm._v(_vm._s(this.name) + " "),
               _c("button", { on: { click: _vm.deleteList } }, [
                 _vm._v("delete list")
               ]),
-              _c("button", { on: { click: _vm.enableEditingList } }, [
+              _c("button", { on: { click: _vm.enableEditing } }, [
                 _vm._v("edit list")
               ])
             ])
           ])
         : _vm._e(),
       _vm._v(" "),
-      _vm.editingList
+      _vm.editing
         ? _c("div", [
             _c("input", {
               directives: [
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.templistValue,
-                  expression: "templistValue"
+                  value: _vm.tempValue,
+                  expression: "tempValue"
                 }
               ],
               staticClass: "input",
-              domProps: { value: _vm.templistValue },
+              domProps: { value: _vm.tempValue },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.templistValue = $event.target.value
+                  _vm.tempValue = $event.target.value
                 }
               }
             }),
             _vm._v(" "),
-            _c("button", { on: { click: _vm.disableEditingList } }, [
+            _c("button", { on: { click: _vm.disableEditing } }, [
               _vm._v(" Cancel ")
             ]),
             _vm._v(" "),
-            _c("button", { on: { click: _vm.saveEdit } }, [_vm._v(" Save ")])
+            _c("button", { on: { click: _vm.editList } }, [_vm._v(" Save ")])
           ])
         : _vm._e(),
       _vm._v(" "),
@@ -20861,7 +20986,10 @@ var render = function() {
         return _c(
           "item",
           _vm._b(
-            { key: item.id, on: { deleteItem: _vm.deleteItem } },
+            {
+              key: item.id,
+              on: { deleteItem: _vm.deleteItem, editItem: _vm.editItem }
+            },
             "item",
             item,
             false

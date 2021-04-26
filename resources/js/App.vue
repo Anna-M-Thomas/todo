@@ -8,8 +8,10 @@
         v-bind:id="list.id"
         v-bind:items="list.items"
         @newItem="newItem"
+        @editItem="editItem"
         @deleteItem="deleteItem"
         @deleteList="deleteList"
+        @editList="editList"
     ></List>  
     <br />
      <form @submit.prevent="newList">
@@ -57,11 +59,19 @@ export default {
             this.lists.push({id: data.id, name: data.name, items:[]});
             this.newlistname = "";
         },
-        async editItem() {
-            // To do
+        async editItem(id, newlist, oldlist, content) {
+            const {data} = await window.axios.put(`api/items/${id}`, {newlist, oldlist, content});
+            if(newlist!==oldlist){
+                //do something to change lists
+            }else{
+                let updatedlist = this.lists.find(oldlist=>oldlist.items.some(item=>item.id===id))
+               updatedlist.items = updatedlist.items.map(item=> item.id===id? data : item)
+            }
         },
-        async editList() {
-            // To do
+        async editList(newname, listid) {
+            const {data} = await window.axios.put(`api/lists/${listid}`, {name: newname});
+            let updatedlist = this.lists.find(oldlist =>oldlist.id===listid);
+            updatedlist.name = data.name;
         },
         async deleteItem(id) {
             const response = await window.axios.delete(`/api/items/${id}`);
