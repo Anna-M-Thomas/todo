@@ -15,8 +15,8 @@
         <Draggable
             v-model="items"
             group="items"
-            @start="startDragged"
             @end="endDragged"
+            :data-list="this.id"
         >
             <item
                 v-for="item in items"
@@ -24,7 +24,7 @@
                 @deleteItem="deleteItem"
                 @editItem="editItem"
                 :key="item.id"
-                :data-item="item.id"
+                :data-itemid="item.id"
             ></item>
         </Draggable>
         <form @submit.prevent="newItem">
@@ -54,13 +54,13 @@ export default {
         };
     },
     methods: {
-        startDragged: function(event) {
-            console.log("start called");
-            console.log(event);
-        },
         endDragged: function(event) {
-            console.log("end called");
-            console.log(event);
+            let id = event.item.dataset.itemid;
+            let newlist = event.to.dataset.list;
+            let oldlist = event.from.dataset.list;
+            let content = "NO_CHANGE";
+            console.log(id, newlist, oldlist, content);
+            this.editItem(id, newlist, oldlist, content);
         },
         enableEditing: function() {
             this.tempValue = this.value;

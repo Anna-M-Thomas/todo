@@ -44,8 +44,10 @@ class ItemsController extends Controller
     //I guess this is all I need to do??? tinker shows it's changed
         $newlist->items()->save($item);
       }
-      $item->content = $request->content;
-      $item->save();
+      if($request->content!=="NO_CHANGE"){
+        $item->content = $request->content;
+        $item->save();
+      }
       return response($item->jsonSerialize(), Response::HTTP_OK);
   }
 
