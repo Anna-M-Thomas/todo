@@ -12,13 +12,21 @@
             <button @click="disableEditing">Cancel</button>
             <button @click="editList">Save</button>
         </div>
-        <item
-            v-for="item in items"
-            v-bind="item"
-            @deleteItem="deleteItem"
-            @editItem="editItem"
-            :key="item.id"
-        ></item>
+        <Draggable
+            v-model="items"
+            group="items"
+            @start="startDragged"
+            @end="endDragged"
+        >
+            <item
+                v-for="item in items"
+                v-bind="item"
+                @deleteItem="deleteItem"
+                @editItem="editItem"
+                :key="item.id"
+                :data-item="item.id"
+            ></item>
+        </Draggable>
         <form @submit.prevent="newItem">
             <input
                 type="text"
@@ -34,6 +42,7 @@
 
 <script>
 import Item from "./Item.vue";
+import Draggable from "vuedraggable";
 
 export default {
     name: "List",
@@ -45,6 +54,14 @@ export default {
         };
     },
     methods: {
+        startDragged: function(event) {
+            console.log("start called");
+            console.log(event);
+        },
+        endDragged: function(event) {
+            console.log("end called");
+            console.log(event);
+        },
         enableEditing: function() {
             this.tempValue = this.value;
             this.editing = true;
@@ -73,7 +90,8 @@ export default {
     },
     props: ["name", "id", "items"],
     components: {
-        Item
+        Item,
+        Draggable
     }
 };
 </script>
