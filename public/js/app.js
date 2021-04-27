@@ -24734,15 +24734,8 @@ var render = function() {
       _c(
         "Draggable",
         {
-          attrs: { group: "items", "data-list": this.id },
-          on: { end: _vm.endDragged },
-          model: {
-            value: _vm.items,
-            callback: function($$v) {
-              _vm.items = $$v
-            },
-            expression: "items"
-          }
+          attrs: { list: _vm.items, group: "items", "data-list": this.id },
+          on: { end: _vm.endDragged }
         },
         _vm._l(_vm.items, function(item) {
           return _c(

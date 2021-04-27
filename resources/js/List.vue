@@ -13,7 +13,7 @@
             <button @click="editList">Save</button>
         </div>
         <Draggable
-            v-model="items"
+            :list="items"
             group="items"
             @end="endDragged"
             :data-list="this.id"
