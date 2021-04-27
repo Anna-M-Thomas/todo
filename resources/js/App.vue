@@ -1,5 +1,18 @@
 <template>
     <div id="app">
+        <div class="row">
+            <form action="#" @submit.prevent="handleLogin">
+                <div class="form-row">
+                    <input type="email" v-model="formData.email" />
+                </div>
+                <div class="form-row">
+                    <input type="password" v-model="formData.password" />
+                </div>
+                <div class="form-row">
+                    <button type="submit">Sign In</button>
+                </div>
+            </form>
+        </div>
         <List
             v-for="list in lists"
             :key="list.id"
@@ -34,10 +47,24 @@ export default {
     data() {
         return {
             newlistname: "",
-            lists: []
+            lists: [],
+            formData: {
+                email: "",
+                password: ""
+            }
         };
     },
     methods: {
+        handleLogin() {
+            axios.get("/sanctum/csrf-cookie").then(response => {
+                axios
+                    .post("/login", this.formData)
+                    .then(response => {
+                        console.log("User signed in!");
+                    })
+                    .catch(error => console.log(error)); // credentials didn't match
+            });
+        },
         async getLists() {
             const listresponse = await window.axios.get("/api/lists");
             const returnedLists = listresponse.data;

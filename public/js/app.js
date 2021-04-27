@@ -1893,18 +1893,46 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "App",
   data: function data() {
     return {
       newlistname: "",
-      lists: []
+      lists: [],
+      formData: {
+        email: "",
+        password: ""
+      }
     };
   },
   methods: {
-    getLists: function getLists() {
+    handleLogin: function handleLogin() {
       var _this = this;
+
+      axios.get("/sanctum/csrf-cookie").then(function (response) {
+        axios.post("/login", _this.formData).then(function (response) {
+          console.log("User signed in!");
+        })["catch"](function (error) {
+          return console.log(error);
+        }); // credentials didn't match
+      });
+    },
+    getLists: function getLists() {
+      var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         var listresponse, returnedLists, itemsresponse, returnedItems;
@@ -1933,7 +1961,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     })
                   };
 
-                  _this.lists.push(newList);
+                  _this2.lists.push(newList);
                 });
 
               case 9:
@@ -1946,7 +1974,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     //Get changed list out of lists, items.push(). list param is list id
     newItem: function newItem(list, content) {
-      var _this2 = this;
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         var user, _yield$window$axios$p, data, updatedlist;
@@ -1966,7 +1994,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 3:
                 _yield$window$axios$p = _context2.sent;
                 data = _yield$window$axios$p.data;
-                updatedlist = _this2.lists.find(function (oldlist) {
+                updatedlist = _this3.lists.find(function (oldlist) {
                   return oldlist.id === list;
                 });
                 updatedlist.items.push({
@@ -1974,7 +2002,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   id: data.id,
                   list: data.todolist_id
                 });
-                _this2.newlistname = "";
+                _this3.newlistname = "";
 
               case 8:
               case "end":
@@ -1985,7 +2013,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     newList: function newList() {
-      var _this3 = this;
+      var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
         var user, name, _yield$window$axios$p2, data;
@@ -1995,7 +2023,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context3.prev = _context3.next) {
               case 0:
                 user = 1;
-                name = _this3.newlistname;
+                name = _this4.newlistname;
                 _context3.next = 4;
                 return window.axios.post("/api/lists", {
                   user: user,
@@ -2006,13 +2034,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _yield$window$axios$p2 = _context3.sent;
                 data = _yield$window$axios$p2.data;
 
-                _this3.lists.push({
+                _this4.lists.push({
                   id: data.id,
                   name: data.name,
                   items: []
                 });
 
-                _this3.newlistname = "";
+                _this4.newlistname = "";
 
               case 8:
               case "end":
@@ -2023,7 +2051,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     editItem: function editItem(id, newlist, oldlist, content) {
-      var _this4 = this;
+      var _this5 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
         var _yield$window$axios$p3, data, updatedlist;
@@ -2044,7 +2072,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 data = _yield$window$axios$p3.data;
 
                 if (content !== "NO_CHANGE") {
-                  updatedlist = _this4.lists.find(function (oldlist) {
+                  updatedlist = _this5.lists.find(function (oldlist) {
                     return oldlist.items.some(function (item) {
                       return item.id === id;
                     });
@@ -2063,7 +2091,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     editList: function editList(newname, listid) {
-      var _this5 = this;
+      var _this6 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
         var _yield$window$axios$p4, data, updatedlist;
@@ -2080,7 +2108,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 2:
                 _yield$window$axios$p4 = _context5.sent;
                 data = _yield$window$axios$p4.data;
-                updatedlist = _this5.lists.find(function (oldlist) {
+                updatedlist = _this6.lists.find(function (oldlist) {
                   return oldlist.id === listid;
                 });
                 updatedlist.name = data.name;
@@ -2094,7 +2122,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     deleteItem: function deleteItem(id) {
-      var _this6 = this;
+      var _this7 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
         var response, updatedlist;
@@ -2109,7 +2137,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context6.sent;
 
                 if (response.status == 200) {
-                  updatedlist = _this6.lists.find(function (oldlist) {
+                  updatedlist = _this7.lists.find(function (oldlist) {
                     return oldlist.items.some(function (item) {
                       return item.id === id;
                     });
@@ -2128,7 +2156,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     deleteList: function deleteList(id) {
-      var _this7 = this;
+      var _this8 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7() {
         var response;
@@ -2143,7 +2171,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context7.sent;
 
                 if (response.status == 200) {
-                  _this7.lists = _this7.lists.filter(function (oldlist) {
+                  _this8.lists = _this8.lists.filter(function (oldlist) {
                     return oldlist.id !== id;
                   });
                 }
@@ -24527,6 +24555,70 @@ var render = function() {
     "div",
     { attrs: { id: "app" } },
     [
+      _c("div", { staticClass: "row" }, [
+        _c(
+          "form",
+          {
+            attrs: { action: "#" },
+            on: {
+              submit: function($event) {
+                $event.preventDefault()
+                return _vm.handleLogin($event)
+              }
+            }
+          },
+          [
+            _c("div", { staticClass: "form-row" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.formData.email,
+                    expression: "formData.email"
+                  }
+                ],
+                attrs: { type: "email" },
+                domProps: { value: _vm.formData.email },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.formData, "email", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.formData.password,
+                    expression: "formData.password"
+                  }
+                ],
+                attrs: { type: "password" },
+                domProps: { value: _vm.formData.password },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.formData, "password", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _vm._m(0)
+          ]
+        )
+      ]),
+      _vm._v(" "),
       _vm._l(_vm.lists, function(list) {
         return _c("List", {
           key: list.id,
@@ -24587,7 +24679,16 @@ var render = function() {
     2
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-row" }, [
+      _c("button", { attrs: { type: "submit" } }, [_vm._v("Sign In")])
+    ])
+  }
+]
 render._withStripped = true
 
 
