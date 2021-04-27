@@ -14,16 +14,17 @@ use Illuminate\Http\Response;
 
 class ListsController extends Controller
 {
-  public function index(){
-      $user = User::find(1);
+  public function index(Request $request){
+      $requestuser = $request->user();
+      $user = User::find($requestuser->id);
       $lists = $user->todolists;
       return response($lists->jsonSerialize(), Response::HTTP_OK);
   }
 
   //The request is in body. 
-  //I need just a name of list and user id for now.
   public function store(Request $request){
-      $user = User::find($request->user);
+        $requestuser = $request->user();
+      $user = User::find($requestuser->id);
       $list = new Todolist();
       $list->name = $request->name;
       $user->todolists()->save($list);

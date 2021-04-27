@@ -1,41 +1,44 @@
 <template>
     <div id="app">
-        <div class="row">
+        <div v-if="!user">
             <form action="#" @submit.prevent="handleLogin">
-                <div class="form-row">
+                <div>
                     <input type="email" v-model="formData.email" />
                 </div>
-                <div class="form-row">
+                <div>
                     <input type="password" v-model="formData.password" />
                 </div>
-                <div class="form-row">
-                    <button type="submit">Sign In</button>
+                <div>
+                    <button type="submit">Sign in</button>
                 </div>
             </form>
         </div>
-        <List
-            v-for="list in lists"
-            :key="list.id"
-            v-bind:name="list.name"
-            v-bind:id="list.id"
-            v-bind:items="list.items"
-            @newItem="newItem"
-            @editItem="editItem"
-            @deleteItem="deleteItem"
-            @deleteList="deleteList"
-            @editList="editList"
-        ></List>
-        <br />
-        <form @submit.prevent="newList">
-            <input
-                type="text"
-                class="input"
-                name="listname"
-                v-model="newlistname"
-                placeholder="MAKE NEW LIST"
-            />
-            <button type="submit">submit</button>
-        </form>
+        <div v-if="user">
+            <button v-on:click="handleLogout">Log out</button>
+            <List
+                v-for="list in lists"
+                :key="list.id"
+                v-bind:name="list.name"
+                v-bind:id="list.id"
+                v-bind:items="list.items"
+                @newItem="newItem"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
+                @deleteList="deleteList"
+                @editList="editList"
+            ></List>
+            <br />
+            <form @submit.prevent="newList">
+                <input
+                    type="text"
+                    class="input"
+                    name="listname"
+                    v-model="newlistname"
+                    placeholder="MAKE NEW LIST"
+                />
+                <button type="submit">submit</button>
+            </form>
+        </div>
     </div>
 </template>
 
@@ -48,6 +51,7 @@ export default {
         return {
             newlistname: "",
             lists: [],
+            user: null,
             formData: {
                 email: "",
                 password: ""
@@ -58,14 +62,31 @@ export default {
         handleLogin() {
             axios.get("/sanctum/csrf-cookie").then(response => {
                 axios
-                    .post("/login", this.formData)
+                    .post("/api/login", this.formData)
                     .then(response => {
                         console.log("User signed in!");
+                    })
+                    .then(response => {
+                        axios.get("/api/user").then(response => {
+                            console.log(response.data);
+                            this.user = response.data;
+                            this.getLists();
+                        });
                     })
                     .catch(error => console.log(error)); // credentials didn't match
             });
         },
+        handleLogout() {
+            axios
+                .post("/api/logout")
+                .then(response => {
+                    console.log("....logged out??");
+                    this.user = null;
+                })
+                .catch(error => console.log(error)); // credentials didn't match
+        },
         async getLists() {
+            console.log("I was called");
             const listresponse = await window.axios.get("/api/lists");
             const returnedLists = listresponse.data;
             const itemsresponse = await window.axios.get("/api/items");
@@ -148,7 +169,7 @@ export default {
         }
     },
     created() {
-        this.getLists();
+        //
     },
     components: {
         List

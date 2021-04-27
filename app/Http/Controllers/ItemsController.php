@@ -16,15 +16,17 @@ use Illuminate\Http\Response;
 class ItemsController extends Controller
 {
 //I've just got user id set at 1, index() is get and has no body
-  public function index(){
-      $user = User::find(1);
+  public function index(Request $request){
+      $requestuser = $request->user();
+      $user = User::find($requestuser->id);
       $items = $user->items;
       return response($items->jsonSerialize(), Response::HTTP_OK);
   }
 
   //POST to /api/items, in request: user id, list id, item content
   public function store(Request $request){
-      $user = User::find($request->user);
+    $requestuser = $request->user();
+      $user = User::find($requestuser->id);
       $list = Todolist::find($request->list);
       $item = new Todoitem();
       $item->content = $request->content;

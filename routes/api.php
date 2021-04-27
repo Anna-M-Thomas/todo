@@ -20,7 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::resource('/lists', 'App\Http\Controllers\ListsController', [
     'except' => ['edit', 'show', 'create']
-  ]);
+  ])->middleware('auth:sanctum');
 
 // GET 	/api/items 	        index (get all)	
 // POST 	/api/items/store 	post a new item?
@@ -29,4 +29,8 @@ Route::resource('/lists', 'App\Http\Controllers\ListsController', [
 
 Route::resource('/items', 'App\Http\Controllers\ItemsController', [
   'except' => ['edit', 'show', 'create']
-]);
+])->middleware('auth:sanctum');
+
+Route::post('/login', 'App\Http\Controllers\AuthController@login');
+Route::post('/logout', 'App\Http\Controllers\AuthController@logout');
+Route::get('/user', 'App\Http\Controllers\AuthController@me')->middleware('auth:sanctum');

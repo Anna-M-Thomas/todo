@@ -1906,6 +1906,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "App",
@@ -1913,6 +1916,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     return {
       newlistname: "",
       lists: [],
+      user: null,
       formData: {
         email: "",
         password: ""
@@ -1924,15 +1928,32 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       axios.get("/sanctum/csrf-cookie").then(function (response) {
-        axios.post("/login", _this.formData).then(function (response) {
+        axios.post("/api/login", _this.formData).then(function (response) {
           console.log("User signed in!");
+        }).then(function (response) {
+          axios.get("/api/user").then(function (response) {
+            console.log(response.data);
+            _this.user = response.data;
+
+            _this.getLists();
+          });
         })["catch"](function (error) {
           return console.log(error);
         }); // credentials didn't match
       });
     },
-    getLists: function getLists() {
+    handleLogout: function handleLogout() {
       var _this2 = this;
+
+      axios.post("/api/logout").then(function (response) {
+        console.log("....logged out??");
+        _this2.user = null;
+      })["catch"](function (error) {
+        return console.log(error);
+      }); // credentials didn't match
+    },
+    getLists: function getLists() {
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         var listresponse, returnedLists, itemsresponse, returnedItems;
@@ -1940,16 +1961,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
+                console.log("I was called");
+                _context.next = 3;
                 return window.axios.get("/api/lists");
 
-              case 2:
+              case 3:
                 listresponse = _context.sent;
                 returnedLists = listresponse.data;
-                _context.next = 6;
+                _context.next = 7;
                 return window.axios.get("/api/items");
 
-              case 6:
+              case 7:
                 itemsresponse = _context.sent;
                 returnedItems = itemsresponse.data;
                 returnedLists.forEach(function (list) {
@@ -1961,10 +1983,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     })
                   };
 
-                  _this2.lists.push(newList);
+                  _this3.lists.push(newList);
                 });
 
-              case 9:
+              case 10:
               case "end":
                 return _context.stop();
             }
@@ -1974,7 +1996,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     //Get changed list out of lists, items.push(). list param is list id
     newItem: function newItem(list, content) {
-      var _this3 = this;
+      var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         var user, _yield$window$axios$p, data, updatedlist;
@@ -1994,7 +2016,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 3:
                 _yield$window$axios$p = _context2.sent;
                 data = _yield$window$axios$p.data;
-                updatedlist = _this3.lists.find(function (oldlist) {
+                updatedlist = _this4.lists.find(function (oldlist) {
                   return oldlist.id === list;
                 });
                 updatedlist.items.push({
@@ -2002,7 +2024,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   id: data.id,
                   list: data.todolist_id
                 });
-                _this3.newlistname = "";
+                _this4.newlistname = "";
 
               case 8:
               case "end":
@@ -2013,7 +2035,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     newList: function newList() {
-      var _this4 = this;
+      var _this5 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
         var user, name, _yield$window$axios$p2, data;
@@ -2023,7 +2045,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context3.prev = _context3.next) {
               case 0:
                 user = 1;
-                name = _this4.newlistname;
+                name = _this5.newlistname;
                 _context3.next = 4;
                 return window.axios.post("/api/lists", {
                   user: user,
@@ -2034,13 +2056,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _yield$window$axios$p2 = _context3.sent;
                 data = _yield$window$axios$p2.data;
 
-                _this4.lists.push({
+                _this5.lists.push({
                   id: data.id,
                   name: data.name,
                   items: []
                 });
 
-                _this4.newlistname = "";
+                _this5.newlistname = "";
 
               case 8:
               case "end":
@@ -2051,7 +2073,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     editItem: function editItem(id, newlist, oldlist, content) {
-      var _this5 = this;
+      var _this6 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
         var _yield$window$axios$p3, data, updatedlist;
@@ -2072,7 +2094,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 data = _yield$window$axios$p3.data;
 
                 if (content !== "NO_CHANGE") {
-                  updatedlist = _this5.lists.find(function (oldlist) {
+                  updatedlist = _this6.lists.find(function (oldlist) {
                     return oldlist.items.some(function (item) {
                       return item.id === id;
                     });
@@ -2091,7 +2113,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     editList: function editList(newname, listid) {
-      var _this6 = this;
+      var _this7 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
         var _yield$window$axios$p4, data, updatedlist;
@@ -2108,7 +2130,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 2:
                 _yield$window$axios$p4 = _context5.sent;
                 data = _yield$window$axios$p4.data;
-                updatedlist = _this6.lists.find(function (oldlist) {
+                updatedlist = _this7.lists.find(function (oldlist) {
                   return oldlist.id === listid;
                 });
                 updatedlist.name = data.name;
@@ -2122,7 +2144,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     deleteItem: function deleteItem(id) {
-      var _this7 = this;
+      var _this8 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
         var response, updatedlist;
@@ -2137,7 +2159,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context6.sent;
 
                 if (response.status == 200) {
-                  updatedlist = _this7.lists.find(function (oldlist) {
+                  updatedlist = _this8.lists.find(function (oldlist) {
                     return oldlist.items.some(function (item) {
                       return item.id === id;
                     });
@@ -2156,7 +2178,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     deleteList: function deleteList(id) {
-      var _this8 = this;
+      var _this9 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7() {
         var response;
@@ -2171,7 +2193,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context7.sent;
 
                 if (response.status == 200) {
-                  _this8.lists = _this8.lists.filter(function (oldlist) {
+                  _this9.lists = _this9.lists.filter(function (oldlist) {
                     return oldlist.id !== id;
                   });
                 }
@@ -2185,8 +2207,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     }
   },
-  created: function created() {
-    this.getLists();
+  created: function created() {//
   },
   components: {
     List: _List_vue__WEBPACK_IMPORTED_MODULE_1__.default
@@ -2408,7 +2429,8 @@ window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
  */
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+axios.defaults.withCredentials = true;
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -24551,141 +24573,150 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { attrs: { id: "app" } },
-    [
-      _c("div", { staticClass: "row" }, [
-        _c(
-          "form",
-          {
-            attrs: { action: "#" },
-            on: {
-              submit: function($event) {
-                $event.preventDefault()
-                return _vm.handleLogin($event)
-              }
-            }
-          },
-          [
-            _c("div", { staticClass: "form-row" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.formData.email,
-                    expression: "formData.email"
-                  }
-                ],
-                attrs: { type: "email" },
-                domProps: { value: _vm.formData.email },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.$set(_vm.formData, "email", $event.target.value)
-                  }
+  return _c("div", { attrs: { id: "app" } }, [
+    !_vm.user
+      ? _c("div", [
+          _c(
+            "form",
+            {
+              attrs: { action: "#" },
+              on: {
+                submit: function($event) {
+                  $event.preventDefault()
+                  return _vm.handleLogin($event)
                 }
-              })
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "form-row" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.formData.password,
-                    expression: "formData.password"
-                  }
-                ],
-                attrs: { type: "password" },
-                domProps: { value: _vm.formData.password },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.$set(_vm.formData, "password", $event.target.value)
-                  }
-                }
-              })
-            ]),
-            _vm._v(" "),
-            _vm._m(0)
-          ]
-        )
-      ]),
-      _vm._v(" "),
-      _vm._l(_vm.lists, function(list) {
-        return _c("List", {
-          key: list.id,
-          attrs: { name: list.name, id: list.id, items: list.items },
-          on: {
-            newItem: _vm.newItem,
-            editItem: _vm.editItem,
-            deleteItem: _vm.deleteItem,
-            deleteList: _vm.deleteList,
-            editList: _vm.editList
-          }
-        })
-      }),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c(
-        "form",
-        {
-          on: {
-            submit: function($event) {
-              $event.preventDefault()
-              return _vm.newList($event)
-            }
-          }
-        },
-        [
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.newlistname,
-                expression: "newlistname"
               }
-            ],
-            staticClass: "input",
-            attrs: {
-              type: "text",
-              name: "listname",
-              placeholder: "MAKE NEW LIST"
             },
-            domProps: { value: _vm.newlistname },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
+            [
+              _c("div", [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.formData.email,
+                      expression: "formData.email"
+                    }
+                  ],
+                  attrs: { type: "email" },
+                  domProps: { value: _vm.formData.email },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.formData, "email", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.formData.password,
+                      expression: "formData.password"
+                    }
+                  ],
+                  attrs: { type: "password" },
+                  domProps: { value: _vm.formData.password },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.formData, "password", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _vm._m(0)
+            ]
+          )
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.user
+      ? _c(
+          "div",
+          [
+            _c("button", { on: { click: _vm.handleLogout } }, [
+              _vm._v("Log out")
+            ]),
+            _vm._v(" "),
+            _vm._l(_vm.lists, function(list) {
+              return _c("List", {
+                key: list.id,
+                attrs: { name: list.name, id: list.id, items: list.items },
+                on: {
+                  newItem: _vm.newItem,
+                  editItem: _vm.editItem,
+                  deleteItem: _vm.deleteItem,
+                  deleteList: _vm.deleteList,
+                  editList: _vm.editList
                 }
-                _vm.newlistname = $event.target.value
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("button", { attrs: { type: "submit" } }, [_vm._v("submit")])
-        ]
-      )
-    ],
-    2
-  )
+              })
+            }),
+            _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
+            _c(
+              "form",
+              {
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    return _vm.newList($event)
+                  }
+                }
+              },
+              [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.newlistname,
+                      expression: "newlistname"
+                    }
+                  ],
+                  staticClass: "input",
+                  attrs: {
+                    type: "text",
+                    name: "listname",
+                    placeholder: "MAKE NEW LIST"
+                  },
+                  domProps: { value: _vm.newlistname },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.newlistname = $event.target.value
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("button", { attrs: { type: "submit" } }, [_vm._v("submit")])
+              ]
+            )
+          ],
+          2
+        )
+      : _vm._e()
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-row" }, [
-      _c("button", { attrs: { type: "submit" } }, [_vm._v("Sign In")])
+    return _c("div", [
+      _c("button", { attrs: { type: "submit" } }, [_vm._v("Sign in")])
     ])
   }
 ]
