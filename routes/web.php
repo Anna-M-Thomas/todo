@@ -17,4 +17,3 @@ Route::get('{any}', function () {
     return view('app');
 })->where('any', '.*');
 
-Route::post('/login', 'App\Http\Controllers\AuthController@login');

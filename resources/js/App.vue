@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <h1>To Do</h1>
         <div v-if="!user">
             <form action="#" @submit.prevent="handleLogin">
                 <div>

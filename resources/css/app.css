@@ -3,3 +3,7 @@
     background-color: lightblue;
     margin: 5px;
 }
+
+#app {
+    line-height: 1.5;
+}
