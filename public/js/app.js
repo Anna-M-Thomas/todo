@@ -2023,8 +2023,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     editItem: function editItem(id, newlist, oldlist, content) {
+      var _this4 = this;
+
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
-        var _yield$window$axios$p3, data;
+        var _yield$window$axios$p3, data, updatedlist;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
           while (1) {
@@ -2041,15 +2043,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _yield$window$axios$p3 = _context4.sent;
                 data = _yield$window$axios$p3.data;
 
-                if (newlist !== oldlist) {//Lists changed
-                } else {//content changed
-                    // let updatedlist = this.lists.find(oldlist =>
-                    //     oldlist.items.some(item => item.id === id)
-                    // );
-                    // updatedlist.items = updatedlist.items.map(item =>
-                    //     item.id === id ? data : item
-                    // );
-                  }
+                if (content !== "NO_CHANGE") {
+                  updatedlist = _this4.lists.find(function (oldlist) {
+                    return oldlist.items.some(function (item) {
+                      return item.id === id;
+                    });
+                  });
+                  updatedlist.items = updatedlist.items.map(function (item) {
+                    return item.id === id ? data : item;
+                  });
+                }
 
               case 5:
               case "end":
@@ -2060,7 +2063,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     editList: function editList(newname, listid) {
-      var _this4 = this;
+      var _this5 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5() {
         var _yield$window$axios$p4, data, updatedlist;
@@ -2077,7 +2080,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 2:
                 _yield$window$axios$p4 = _context5.sent;
                 data = _yield$window$axios$p4.data;
-                updatedlist = _this4.lists.find(function (oldlist) {
+                updatedlist = _this5.lists.find(function (oldlist) {
                   return oldlist.id === listid;
                 });
                 updatedlist.name = data.name;
@@ -2091,7 +2094,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     deleteItem: function deleteItem(id) {
-      var _this5 = this;
+      var _this6 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
         var response, updatedlist;
@@ -2106,7 +2109,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context6.sent;
 
                 if (response.status == 200) {
-                  updatedlist = _this5.lists.find(function (oldlist) {
+                  updatedlist = _this6.lists.find(function (oldlist) {
                     return oldlist.items.some(function (item) {
                       return item.id === id;
                     });
@@ -2125,7 +2128,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     deleteList: function deleteList(id) {
-      var _this6 = this;
+      var _this7 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7() {
         var response;
@@ -2140,7 +2143,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context7.sent;
 
                 if (response.status == 200) {
-                  _this6.lists = _this6.lists.filter(function (oldlist) {
+                  _this7.lists = _this7.lists.filter(function (oldlist) {
                     return oldlist.id !== id;
                   });
                 }

@@ -86,16 +86,13 @@ export default {
                 oldlist,
                 content
             });
-            if (newlist !== oldlist) {
-                //Lists changed
-            } else {
-                //content changed
-                // let updatedlist = this.lists.find(oldlist =>
-                //     oldlist.items.some(item => item.id === id)
-                // );
-                // updatedlist.items = updatedlist.items.map(item =>
-                //     item.id === id ? data : item
-                // );
+            if (content !== "NO_CHANGE") {
+                let updatedlist = this.lists.find(oldlist =>
+                    oldlist.items.some(item => item.id === id)
+                );
+                updatedlist.items = updatedlist.items.map(item =>
+                    item.id === id ? data : item
+                );
             }
         },
         async editList(newname, listid) {
