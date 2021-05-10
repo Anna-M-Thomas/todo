@@ -15,7 +15,7 @@ use Illuminate\Http\Response;
 
 class ItemsController extends Controller
 {
-//I've just got user id set at 1, index() is get and has no body
+//index() is get and has no body
   public function index(Request $request){
       $requestuser = $request->user();
       $user = User::find($requestuser->id);
@@ -25,6 +25,10 @@ class ItemsController extends Controller
 
   //POST to /api/items, in request: user id, list id, item content
   public function store(Request $request){
+    $request->validate([
+      'list' => 'required',
+      'content' => 'required',
+  ]);
     $requestuser = $request->user();
       $user = User::find($requestuser->id);
       $list = Todolist::find($request->list);
@@ -39,6 +43,10 @@ class ItemsController extends Controller
 
   //PUT to /api/items/id, in url id, in request old list, new list, content
   public function update(Request $request, $id){
+    $request->validate([
+      'oldlist' => 'required',
+      'newlist' => 'required',
+      'content' => 'required']);
       $item = Todoitem::find($id);
       if($request->oldlist!==$request->newlist){
         $oldlist = Todolist::find($request->oldlist);

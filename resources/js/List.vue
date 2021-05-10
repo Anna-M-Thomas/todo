@@ -3,12 +3,12 @@
         <div v-if="!editing">
             <h2>
                 {{ this.name }}
-                <button v-on:click="deleteList">delete list</button
-                ><button v-on:click="enableEditing">edit list</button>
+                <button @click="deleteList">delete list</button
+                ><button @click="enableEditing">edit list</button>
             </h2>
         </div>
         <div v-if="editing">
-            <input v-model="tempValue" class="input" />
+            <input type="text" class="input" v-model="tempname" />
             <button @click="disableEditing">Cancel</button>
             <button @click="editList">Save</button>
         </div>
@@ -50,28 +50,30 @@ export default {
         return {
             newitemcontent: "",
             editing: false,
-            tempValue: null
+            tempname: ""
         };
     },
+    emits: ["editlist", "newItem", "deleteItem", "editItem", "deleteList"],
     methods: {
         endDragged: function(event) {
             let id = event.item.dataset.itemid;
             let newlist = event.to.dataset.list;
             let oldlist = event.from.dataset.list;
             let content = "NO_CHANGE";
-            console.log(id, newlist, oldlist, content);
             this.editItem(id, newlist, oldlist, content);
         },
         enableEditing: function() {
-            this.tempValue = this.value;
+            this.tempname = this.value;
             this.editing = true;
         },
         disableEditing: function() {
-            this.tempValue = null;
+            this.tempname = null;
             this.editing = false;
         },
         editList() {
-            this.$emit("editList", this.tempValue, this.id);
+            if (this.tempname) {
+                this.$emit("editList", this.tempname, this.id);
+            }
             this.disableEditing();
         },
         newItem() {

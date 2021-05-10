@@ -23,6 +23,9 @@ class ListsController extends Controller
 
   //The request is in body. 
   public function store(Request $request){
+    $request->validate([
+      'name' => 'required',
+  ]);
         $requestuser = $request->user();
       $user = User::find($requestuser->id);
       $list = new Todolist();
@@ -34,6 +37,9 @@ class ListsController extends Controller
 
   //id in url, name in body
   public function update(Request $request, $id){
+    $request->validate([
+      'name' => 'required',
+  ]);
       $list = Todolist::find($id);
         $list->name = $request->name;
         $list->save();

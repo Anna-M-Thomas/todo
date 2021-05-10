@@ -1962,17 +1962,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.log("I was called");
-                _context.next = 3;
+                _context.next = 2;
                 return window.axios.get("/api/lists");
 
-              case 3:
+              case 2:
                 listresponse = _context.sent;
                 returnedLists = listresponse.data;
-                _context.next = 7;
+                _context.next = 6;
                 return window.axios.get("/api/items");
 
-              case 7:
+              case 6:
                 itemsresponse = _context.sent;
                 returnedItems = itemsresponse.data;
                 returnedLists.forEach(function (list) {
@@ -1987,7 +1986,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this3.lists.push(newList);
                 });
 
-              case 10:
+              case 9:
               case "end":
                 return _context.stop();
             }
@@ -2012,6 +2011,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   user: user,
                   list: list,
                   content: content
+                })["catch"](function (error) {
+                  return console.log(error);
                 });
 
               case 3:
@@ -2039,21 +2040,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this5 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
-        var user, name, _yield$window$axios$p2, data;
+        var name, _yield$window$axios$p2, data;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                user = 1;
                 name = _this5.newlistname;
-                _context3.next = 4;
+                _context3.next = 3;
                 return window.axios.post("/api/lists", {
-                  user: user,
                   name: name
+                })["catch"](function (error) {
+                  return console.log(error);
                 });
 
-              case 4:
+              case 3:
                 _yield$window$axios$p2 = _context3.sent;
                 data = _yield$window$axios$p2.data;
 
@@ -2065,7 +2066,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                 _this5.newlistname = "";
 
-              case 8:
+              case 7:
               case "end":
                 return _context3.stop();
             }
@@ -2083,14 +2084,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _context4.next = 2;
+                if (!(content.length == 0)) {
+                  _context4.next = 2;
+                  break;
+                }
+
+                return _context4.abrupt("return");
+
+              case 2:
+                _context4.next = 4;
                 return window.axios.put("api/items/".concat(id), {
                   newlist: newlist,
                   oldlist: oldlist,
                   content: content
+                })["catch"](function (error) {
+                  return console.log(error);
                 });
 
-              case 2:
+              case 4:
                 _yield$window$axios$p3 = _context4.sent;
                 data = _yield$window$axios$p3.data;
 
@@ -2105,7 +2116,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   });
                 }
 
-              case 5:
+              case 7:
               case "end":
                 return _context4.stop();
             }
@@ -2123,12 +2134,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                _context5.next = 2;
-                return window.axios.put("api/lists/".concat(listid), {
-                  name: newname
-                });
+                if (!(newname.length == 0)) {
+                  _context5.next = 2;
+                  break;
+                }
+
+                return _context5.abrupt("return");
 
               case 2:
+                _context5.next = 4;
+                return window.axios.put("api/lists/".concat(listid), {
+                  name: newname
+                })["catch"](function (error) {
+                  return console.log(error);
+                });
+
+              case 4:
                 _yield$window$axios$p4 = _context5.sent;
                 data = _yield$window$axios$p4.data;
                 updatedlist = _this7.lists.find(function (oldlist) {
@@ -2136,7 +2157,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
                 updatedlist.name = data.name;
 
-              case 6:
+              case 8:
               case "end":
                 return _context5.stop();
             }
@@ -2208,8 +2229,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     }
   },
-  created: function created() {//
-  },
   components: {
     List: _List_vue__WEBPACK_IMPORTED_MODULE_1__.default
   }
@@ -2253,6 +2272,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   props: ["content", "id", "todolist_id"],
+  emits: ["deleteItem", "editItem"],
   methods: {
     deleteItem: function deleteItem() {
       this.$emit("deleteItem", this.id);
@@ -2267,14 +2287,16 @@ __webpack_require__.r(__webpack_exports__);
     },
     editItem: function editItem() {
       //newlist, oldlist, content
-      var newlist;
+      if (this.tempValue) {
+        var newlist;
 
-      if (this.changelist) {
-        newlist = this.changelist;
-      } else newlist = this.todolist_id;
+        if (this.changelist) {
+          newlist = this.changelist;
+        } else newlist = this.todolist_id;
 
-      console.log("id inside item", this.id);
-      this.$emit("editItem", this.id, newlist, this.todolist_id, this.tempValue);
+        this.$emit("editItem", this.id, newlist, this.todolist_id, this.tempValue);
+      }
+
       this.disableEditing();
     }
   }
@@ -2346,28 +2368,31 @@ __webpack_require__.r(__webpack_exports__);
     return {
       newitemcontent: "",
       editing: false,
-      tempValue: null
+      tempname: ""
     };
   },
+  emits: ["editlist", "newItem", "deleteItem", "editItem", "deleteList"],
   methods: {
     endDragged: function endDragged(event) {
       var id = event.item.dataset.itemid;
       var newlist = event.to.dataset.list;
       var oldlist = event.from.dataset.list;
       var content = "NO_CHANGE";
-      console.log(id, newlist, oldlist, content);
       this.editItem(id, newlist, oldlist, content);
     },
     enableEditing: function enableEditing() {
-      this.tempValue = this.value;
+      this.tempname = this.value;
       this.editing = true;
     },
     disableEditing: function disableEditing() {
-      this.tempValue = null;
+      this.tempname = null;
       this.editing = false;
     },
     editList: function editList() {
-      this.$emit("editList", this.tempValue, this.id);
+      if (this.tempname) {
+        this.$emit("editList", this.tempname, this.id);
+      }
+
       this.disableEditing();
     },
     newItem: function newItem() {
@@ -24749,17 +24774,7 @@ var render = function() {
     !_vm.editing
       ? _c("div", [
           _vm._v("\n        " + _vm._s(this.content) + "\n        "),
-          _c(
-            "button",
-            {
-              on: {
-                click: function($event) {
-                  return _vm.deleteItem()
-                }
-              }
-            },
-            [_vm._v("Delete")]
-          ),
+          _c("button", { on: { click: _vm.deleteItem } }, [_vm._v("Delete")]),
           _vm._v(" "),
           _c("button", { on: { click: _vm.enableEditing } }, [_vm._v("Edit")])
         ])
@@ -24845,18 +24860,19 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.tempValue,
-                  expression: "tempValue"
+                  value: _vm.tempname,
+                  expression: "tempname"
                 }
               ],
               staticClass: "input",
-              domProps: { value: _vm.tempValue },
+              attrs: { type: "text" },
+              domProps: { value: _vm.tempname },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.tempValue = $event.target.value
+                  _vm.tempname = $event.target.value
                 }
               }
             }),

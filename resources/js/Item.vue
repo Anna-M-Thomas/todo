@@ -2,7 +2,7 @@
     <div class="item">
         <div v-if="!editing">
             {{ this.content }}
-            <button v-on:click="deleteItem()">Delete</button>
+            <button v-on:click="deleteItem">Delete</button>
             <button v-on:click="enableEditing">Edit</button>
         </div>
         <div v-if="editing">
@@ -24,6 +24,7 @@ export default {
         };
     },
     props: ["content", "id", "todolist_id"],
+    emits: ["deleteItem", "editItem"],
     methods: {
         deleteItem() {
             this.$emit("deleteItem", this.id);
@@ -38,18 +39,19 @@ export default {
         },
         editItem() {
             //newlist, oldlist, content
-            let newlist;
-            if (this.changelist) {
-                newlist = this.changelist;
-            } else newlist = this.todolist_id;
-            console.log("id inside item", this.id);
-            this.$emit(
-                "editItem",
-                this.id,
-                newlist,
-                this.todolist_id,
-                this.tempValue
-            );
+            if (this.tempValue) {
+                let newlist;
+                if (this.changelist) {
+                    newlist = this.changelist;
+                } else newlist = this.todolist_id;
+                this.$emit(
+                    "editItem",
+                    this.id,
+                    newlist,
+                    this.todolist_id,
+                    this.tempValue
+                );
+            }
             this.disableEditing();
         }
     }

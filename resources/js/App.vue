@@ -87,7 +87,6 @@ export default {
                 .catch(error => console.log(error)); // credentials didn't match
         },
         async getLists() {
-            console.log("I was called");
             const listresponse = await window.axios.get("/api/lists");
             const returnedLists = listresponse.data;
             const itemsresponse = await window.axios.get("/api/items");
@@ -106,11 +105,13 @@ export default {
         //Get changed list out of lists, items.push(). list param is list id
         async newItem(list, content) {
             let user = 1;
-            const { data } = await window.axios.post("/api/items", {
-                user,
-                list,
-                content
-            });
+            const { data } = await window.axios
+                .post("/api/items", {
+                    user,
+                    list,
+                    content
+                })
+                .catch(error => console.log(error));
             let updatedlist = this.lists.find(oldlist => oldlist.id === list);
             updatedlist.items.push({
                 content: data.content,
@@ -120,21 +121,26 @@ export default {
             this.newlistname = "";
         },
         async newList() {
-            let user = 1;
             let name = this.newlistname;
-            const { data } = await window.axios.post("/api/lists", {
-                user,
-                name
-            });
+            const { data } = await window.axios
+                .post("/api/lists", {
+                    name
+                })
+                .catch(error => console.log(error));
             this.lists.push({ id: data.id, name: data.name, items: [] });
             this.newlistname = "";
         },
         async editItem(id, newlist, oldlist, content) {
-            const { data } = await window.axios.put(`api/items/${id}`, {
-                newlist,
-                oldlist,
-                content
-            });
+            if (content.length == 0) {
+                return;
+            }
+            const { data } = await window.axios
+                .put(`api/items/${id}`, {
+                    newlist,
+                    oldlist,
+                    content
+                })
+                .catch(error => console.log(error));
             if (content !== "NO_CHANGE") {
                 let updatedlist = this.lists.find(oldlist =>
                     oldlist.items.some(item => item.id === id)
@@ -145,9 +151,14 @@ export default {
             }
         },
         async editList(newname, listid) {
-            const { data } = await window.axios.put(`api/lists/${listid}`, {
-                name: newname
-            });
+            if (newname.length == 0) {
+                return;
+            }
+            const { data } = await window.axios
+                .put(`api/lists/${listid}`, {
+                    name: newname
+                })
+                .catch(error => console.log(error));
             let updatedlist = this.lists.find(oldlist => oldlist.id === listid);
             updatedlist.name = data.name;
         },
@@ -168,9 +179,6 @@ export default {
                 this.lists = this.lists.filter(oldlist => oldlist.id !== id);
             }
         }
-    },
-    created() {
-        //
     },
     components: {
         List
